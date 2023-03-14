@@ -55,22 +55,24 @@ def load_saved_artifacts():
     print("loading saved artifacts...done")
 
 
-def get_cv2_image_from_base64_string(b64str):
-    '''
-    credit: https://stackoverflow.com/questions/33754935/read-a-base-64-encoded-image-from-memory-using-opencv-python-library
-    :param uri:
-    :return:
-    '''
-    encoded_data = b64str.split(',')[1]
-    nparr = np.frombuffer(base64.b64decode(encoded_data), np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    return img
+def get_cv2_image_from_base64_string(image_base64_data):
+    try:
+        decoded_data = base64.b64decode(image_base64_data)
+        np_data = np.fromstring(decoded_data, np.uint8)
+        img = cv2.imdecode(np_data, cv2.IMREAD_UNCHANGED)
+        return img, img.shape
+    except:
+        return None, None
 
 
 def get_cropped_image_if_2_eyes(image_path, image_base64_data):
     face_cascade = cv2.CascadeClassifier(
         r"C:\Users\rahul\Desktop\img-cl\server\opencv\haarcascade_frontalface_default.xml")
     eye_cascade = cv2.CascadeClassifier(r"C:\Users\rahul\Desktop\img-cl\server\opencv\haarcascade_eye.xml")
+
+    image_data, image_shape = get_cv2_image_from_base64_string(image_base64_data)
+    if image_data is None or image_shape is None:
+        return None
 
     if image_path:
         img = cv2.imread(image_path)
@@ -98,7 +100,7 @@ def get_b64_test_image_for_virat():
 if __name__ == "__main__":
     load_saved_artifacts()
     #print(classify_image(get_b64_test_image_for_virat(), None))
-    print(classify_image(None, "./testIMGs/Sundar_Pichai-1019x573.webp"))
+    #print(classify_image(None, "./testIMGs/Sundar_Pichai-1019x573.webp"))
     print(classify_image(None, "./testIMGs/images (8).jpg"))
     print(classify_image(None, "./testIMGs/images (3).jpg"))
     print(classify_image(None, "./testIMGs/images (4).jpg"))
