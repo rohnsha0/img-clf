@@ -4,8 +4,8 @@ import utils
 app = Flask(__name__)
 
 
-@app.route('/classification', methods=['GET', 'POST'])
-def classifyIMG():
+@app.route('/classification', methods= ['GET', 'POST'])
+def classification():
     IMGdata = request.form.get('IMGdata')
     response = jsonify(utils.classify_image(IMGdata))
 

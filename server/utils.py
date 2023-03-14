@@ -11,6 +11,7 @@ __model = None
 
 
 def classify_image(image_base64_data, file_path=None):
+
     imgs = get_cropped_image_if_2_eyes(file_path, image_base64_data)
 
     result = []
@@ -20,17 +21,14 @@ def classify_image(image_base64_data, file_path=None):
         scalled_img_har = cv2.resize(img_har, (32, 32))
         combined_img = np.vstack((scalled_raw_img.reshape(32 * 32 * 3, 1), scalled_img_har.reshape(32 * 32, 1)))
 
-        len_image_array = 32 * 32 * 3 + 32 * 32
+        len_image_array = 32*32*3 + 32*32
 
-        final = combined_img.reshape(1, len_image_array).astype(float)
-        #result.append(class_number_to_name(__model.predict(final)[0]))
-        #"""
+        final = combined_img.reshape(1,len_image_array).astype(float)
         result.append({
             'class': class_number_to_name(__model.predict(final)[0]),
-            'class_probability': np.round(__model.predict_proba(final) * 100, 2).tolist()[0],
+            'class_probability': np.around(__model.predict_proba(final)*100,2).tolist()[0],
             'class_dictionary': __classNameToNum
         })
-        #"""
 
     return result
 
@@ -44,51 +42,47 @@ def load_saved_artifacts():
     global __classNameToNum
     global __classNumToName
 
-    with open(r"C:\Users\rahul\Desktop\img-cl\server\artifacts\classDict.json", "r") as f:
+    with open(r"D:\Code\Projects\IMG-clf\server\artifacts\classDict.json", "r") as f:
         __classNameToNum = json.load(f)
         __classNumToName = {v: k for k, v in __classNameToNum.items()}
 
     global __model
     if __model is None:
-        with open(r"C:\Users\rahul\Desktop\img-cl\server\artifacts\best_model.pkl", 'rb') as f:
+        with open(r"D:\Code\Projects\IMG-clf\server\artifacts\updated_model.pkl", 'rb') as f:
             __model = joblib.load(f)
     print("loading saved artifacts...done")
 
 
-def get_cv2_image_from_base64_string(image_base64_data):
-    try:
-        decoded_data = base64.b64decode(image_base64_data)
-        np_data = np.fromstring(decoded_data, np.uint8)
-        img = cv2.imdecode(np_data, cv2.IMREAD_UNCHANGED)
-        return img, img.shape
-    except:
-        return None, None
+def get_cv2_image_from_base64_string(b64str):
+    '''
+    credit: https://stackoverflow.com/questions/33754935/read-a-base-64-encoded-image-from-memory-using-opencv-python-library
+    :param uri:
+    :return:
+    '''
+    encoded_data = b64str.split(',')[1]
+    nparr = np.frombuffer(base64.b64decode(encoded_data), np.uint8)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    return img
 
 
 def get_cropped_image_if_2_eyes(image_path, image_base64_data):
-    face_cascade = cv2.CascadeClassifier(
-        r"C:\Users\rahul\Desktop\img-cl\server\opencv\haarcascade_frontalface_default.xml")
-    eye_cascade = cv2.CascadeClassifier(r"C:\Users\rahul\Desktop\img-cl\server\opencv\haarcascade_eye.xml")
-
-    image_data, image_shape = get_cv2_image_from_base64_string(image_base64_data)
-    if image_data is None or image_shape is None:
-        return None
+    face_cascade = cv2.CascadeClassifier(r"D:\Code\Projects\IMG-clf\server\opencv\haarcascade_frontalface_default.xml")
+    eye_cascade = cv2.CascadeClassifier(r"D:\Code\Projects\IMG-clf\server\opencv\haarcascade_eye.xml")
 
     if image_path:
         img = cv2.imread(image_path)
     else:
         img = get_cv2_image_from_base64_string(image_base64_data)
-
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
     cropped_faces = []
-    for (x, y, w, h) in faces:
-        roi_gray = gray[y:y + h, x:x + w]
-        roi_color = img[y:y + h, x:x + w]
-        eyes = eye_cascade.detectMultiScale(roi_gray)
-        if len(eyes) >= 2:
-            cropped_faces.append(roi_color)
+    for (x,y,w,h) in faces:
+            roi_gray = gray[y:y+h, x:x+w]
+            roi_color = img[y:y+h, x:x+w]
+            eyes = eye_cascade.detectMultiScale(roi_gray)
+            if len(eyes) >= 2:
+                cropped_faces.append(roi_color)
     return cropped_faces
 
 
@@ -99,10 +93,8 @@ def get_b64_test_image_for_virat():
 
 if __name__ == "__main__":
     load_saved_artifacts()
-    #print(classify_image(get_b64_test_image_for_virat(), None))
-    #print(classify_image(None, "./testIMGs/Sundar_Pichai-1019x573.webp"))
-    print(classify_image(None, "./testIMGs/images (8).jpg"))
-    print(classify_image(None, "./testIMGs/images (3).jpg"))
-    print(classify_image(None, "./testIMGs/images (4).jpg"))
-    print(classify_image(None, "./testIMGs/images (5).jpg"))
-    print(classify_image(None, "./testIMGs/images (6).jpg"))
+    print(classify_image(None, r"D:\Code\Projects\IMG-clf\server\testIMGs\KartikAryan.jpg"))
+    print(classify_image(None, r"D:\Code\Projects\IMG-clf\server\testIMGs\Kiara-Advani-featured.webp"))
+    print(classify_image(None, r"D:\Code\Projects\IMG-clf\server\testIMGs\301989876_628900168668197_3709045530888338796_n-e1661926720279.jpg"))
+    print(classify_image(None, r"D:\Code\Projects\IMG-clf\server\testIMGs\images (10).jpg"))
+    print(classify_image(None, r"D:\Code\Projects\IMG-clf\server\testIMGs\sidharth-malhotra-001.jpg"))
