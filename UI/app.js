@@ -21,7 +21,7 @@ function init() {
         var url = "http://127.0.0.1:5000/classification";
 
         $.post(url, {
-            image_data: file.dataURL
+            IMGdata: imageData
         },function(data, status) {
             /* 
             Below is a sample response if you have two faces in an image lets say virat and roger together.
@@ -56,9 +56,8 @@ function init() {
                 $("#resultHolder").hide();
                 $("#divClassTable").hide();                
                 $("#error").show();
-                return;
             }
-            let players = ["lionel_messi", "maria_sharapova", "roger_federer", "serena_williams", "virat_kohli"];
+            let players = ["kartik_aryaani", "kiara_advani", "shraddha_kapoor", "siddharth_malhotra", "virat_kohli"];
             
             let match = null;
             let bestScore = -1;

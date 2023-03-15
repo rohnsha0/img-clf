@@ -9,7 +9,7 @@ def classification():
     IMGdata = request.form.get('IMGdata')
     response = jsonify(utils.classify_image(IMGdata))
 
-    response.headers.add('Acess-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
