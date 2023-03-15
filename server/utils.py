@@ -38,7 +38,7 @@ def class_number_to_name(class_num):
 
 
 def load_saved_artifacts():
-    print("loading saved artifacts...start")
+    print("Attempting to load Artifacts...")
     global __classNameToNum
     global __classNumToName
 
@@ -48,9 +48,9 @@ def load_saved_artifacts():
 
     global __model
     if __model is None:
-        with open(r"D:\Code\Projects\IMG-clf\server\artifacts\updated_model.pkl", 'rb') as f:
+        with open(r"D:\Code\Projects\IMG-clf\server\artifacts\v1.pkl", 'rb') as f:
             __model = joblib.load(f)
-    print("loading saved artifacts...done")
+    print("Artifacts loading Successful")
 
 
 def get_cv2_image_from_base64_string(b64str):

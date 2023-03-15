@@ -57,7 +57,7 @@ function init() {
                 $("#divClassTable").hide();                
                 $("#error").show();
             }
-            let players = ["kartik_aryaani", "kiara_advani", "shraddha_kapoor", "siddharth_malhotra", "virat_kohli"];
+            let players = ["kartik_aryaan", "kiara_advani", "shraddha_kapoor", "siddharth_malhotra", "virat_kohli"];
             
             let match = null;
             let bestScore = -1;
