@@ -48,7 +48,7 @@ def load_saved_artifacts():
 
     global __model
     if __model is None:
-        with open(r"D:\Code\Projects\IMG-clf\server\artifacts\v1.pkl", 'rb') as f:
+        with open(r"D:\Code\Projects\IMG-clf\server\artifacts\final-svm.pkl", 'rb') as f:
             __model = joblib.load(f)
     print("Artifacts loading Successful")
 
